@@ -1,0 +1,257 @@
+go mod init github.com/alta3/yamlgo
+go get "gopkg.in/yaml.v3"
+
+_________________________
+vim ~/yamlgo/startrek.yaml
+
+flagship: 1701
+deepspace: 9
+borg: 1
+tribbles: 10000
+_______________________
+
+vim ~/yamlgo/yaml01.go
+
+package main
+
+import (
+     "fmt"
+     "io/ioutil"
+     "log"
+
+     "gopkg.in/yaml.v3"
+)
+
+func main() {
+
+     // read the contents of, "startrek.yaml"
+     yfile, err := ioutil.ReadFile("startrek.yaml")
+
+     if err != nil {
+
+          log.Fatal(err)
+     }
+
+     // A map in which we read the data is defined
+     data := make(map[interface{}]interface{})
+
+     // Unmarshal the data into the map
+     err2 := yaml.Unmarshal(yfile, &data)
+
+     if err2 != nil {
+
+          log.Fatal(err2)
+     }
+
+     for k, v := range data {
+
+          fmt.Printf("%s -> %d\n", k, v)
+     }
+}
+
+_______________________________
+
+vim ~/yamlgo/villains.yaml
+
+user 1:
+    name: Pamela Isley
+    occupation: botanist
+user 2:
+    name: Oswald Cobblepot
+    occupation: socialite
+user 3:
+    name: Lex Luthor
+    occupation: ceo
+___________________________________
+
+vim ~/yamlgo/yaml02.go
+
+package main
+
+import (
+     "fmt"
+     "io/ioutil"
+     "log"
+
+     "gopkg.in/yaml.v3"
+)
+
+// User struct represents one user record in the file
+type User struct {
+     Name       string
+     Occupation string
+}
+
+func main() {
+
+     yfile, err := ioutil.ReadFile("villains.yaml")
+
+     if err != nil {
+
+          log.Fatal(err)
+     }
+
+     data := make(map[string]User)
+
+     // We deserialize the data into the map or users
+     err2 := yaml.Unmarshal(yfile, &data)
+
+     if err2 != nil {
+
+          log.Fatal(err2)
+     }
+
+     for k, v := range data {
+
+          fmt.Printf("%s: %s\n", k, v)
+     }
+}
+_______________________________________________
+
+vim ~/yamlgo/yaml03.go
+
+/* RZFeeser | Alta3 Research
+   Generating YAML files      */
+
+package main
+
+import (
+     "fmt"
+     "io/ioutil"
+     "log"
+
+     "gopkg.in/yaml.v3"
+)
+
+func main() {
+
+     trees := [5]string{"elm", "oak", "maple", "sycamore", "chestnut"}
+
+     data, err := yaml.Marshal(&trees)
+
+     if err != nil {
+          log.Fatal(err)
+     }
+
+     err2 := ioutil.WriteFile("trees.yaml", data, 0)
+
+     if err2 != nil {
+
+          log.Fatal(err2)
+     }
+
+     fmt.Println("data written")
+}
+___________________________________________________
+
+sudo cat ~/yamlgo/trees.yaml
+// check the tree file
+
+_________________________________________________
+
+vim ~/yamlgo/yaml04.go
+
+/* RZFeeser | Alta3 Research
+   Writing out to a YAML file  */
+
+package main
+
+import (
+     "fmt"
+     "io/ioutil"
+     "log"
+
+     "gopkg.in/yaml.v3"
+)
+
+type User struct {
+     Name       string
+     Occupation string
+}
+
+func main() {
+
+     users := map[string]User{"user 1": {"John Doe", "gardener"},
+          "user 2": {"Lucy Black", "teacher"}}
+
+     data, err := yaml.Marshal(&users)
+
+     if err != nil {
+
+          log.Fatal(err)
+     }
+
+     err2 := ioutil.WriteFile("users.yaml", data, 0)
+
+     if err2 != nil {
+
+          log.Fatal(err2)
+     }
+
+     fmt.Println("data written")
+}    
+_________________________________________________
+
+sudo cat ~/yamlgo/users.yaml
+
+__________________________________________________
+
+vim ~/yamlgo/yaml05.go
+
+/* RZFeeser | Alta3 Research
+   Writing out to a YAML file */
+
+package main
+
+import (
+     "fmt"
+     "io/ioutil"
+     "log"
+
+     "gopkg.in/yaml.v3"
+)
+
+type Record struct {
+     Item string `yaml:"item"`
+     Col  string `yaml:"color"`
+     Size string `yaml:"postage"`
+}
+
+type Config struct {
+     Record Record `yaml:"Settings"`
+}
+
+func main() {
+
+     config := Config{Record: Record{Item: "window", Col: "blue", Size: "small flat rate box"}}
+
+     data, err := yaml.Marshal(&config)
+
+     if err != nil {
+
+          log.Fatal(err)
+     }
+
+     err2 := ioutil.WriteFile("config.yaml", data, 0)
+
+     if err2 != nil {
+          
+          log.Fatal(err2)
+     }
+
+     fmt.Println("data written")
+}
+
+_____________________________________________________________
+
+sudo cat ~/yamlgo/config.yaml
+
+Backup your code to GitHub with the following commands.
+
+cd ~/mycode
+cp ~/*.go ~/mycode/
+git status
+git add /home/student/mycode/*
+git commit -m "to and from YAML"
+git push origin
+cd ~/
